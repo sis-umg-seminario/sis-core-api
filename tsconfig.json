@@ -13,19 +13,22 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@academic/*": ["modules/academic/*"],
-      "@example/*": ["modules/example/*"],
-      "@payments/*": ["modules/payments/*"],
-      "@students/*": ["modules/students/*"]
+      "@academic/*": ["src/modules/academic/*"],
+      "@example/*": ["src/modules/example/*"],
+      "@payments/*": ["src/modules/payments/*"],
+      "@students/*": ["src/modules/students/*"],
+      "@config/*": ["src/config/*"],
+      "@common/*": ["src/common/*"]
     }
   }
 }

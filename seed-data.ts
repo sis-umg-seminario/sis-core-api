@@ -1,12 +1,12 @@
-import { seedTermType } from 'seeds/create-term-type.seed';
+import { seedTermType } from 'src/seeds/create-term-type.seed';
 import AppDataSource from './data-source';
-import { seedPaymentTypes } from 'seeds/create-payment-type.seed';
-import { seedStudents } from 'seeds/create-students.seed';
-import { seedProgram } from 'seeds/create-program.seed';
-import { seedCourses } from 'seeds/create-course.seed';
-import { seedStudentHistory } from 'seeds/create-student-history.seed';
-import { seedStudentProgram } from 'seeds/create-student-program.seed';
-import { seedAcademicTerm } from 'seeds/create-academic-term.seed';
+import { seedPaymentTypes } from 'src/seeds/create-payment-type.seed';
+import { seedStudents } from 'src/seeds/create-students.seed';
+import { seedProgram } from 'src/seeds/create-program.seed';
+import { seedCourses } from 'src/seeds/create-course.seed';
+import { seedStudentHistory } from 'src/seeds/create-student-history.seed';
+import { seedStudentProgram } from 'src/seeds/create-student-program.seed';
+import { seedAcademicTerm } from 'src/seeds/create-academic-term.seed';
 async function runSeeds() {
   await AppDataSource.initialize();
   await seedPaymentTypes(AppDataSource);

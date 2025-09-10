@@ -5,7 +5,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentResourcesService } from '@payments/services/payment-resources.service';
 import { StudentHistory } from '@students/entities/student-history.entity';
-import { isCourseEligible } from '@students/helpers/is-course-eligible';
+import { isCourseEligible } from '@academic/utils/is-course-eligible';
 import { StudentsService } from '@students/services/students.service';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
