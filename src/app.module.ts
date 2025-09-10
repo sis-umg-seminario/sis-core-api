@@ -6,7 +6,7 @@ import { PaymentsModule } from '@payments/payments.module';
 import { StudentsModule } from '@students/students.module';
 import { ExampleModule } from '@example/example.module';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from 'config/database.module';
+import { DatabaseModule } from '@config/database.module';
 
 @Module({
   imports: [
