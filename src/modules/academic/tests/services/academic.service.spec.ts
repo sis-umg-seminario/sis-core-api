@@ -3,10 +3,8 @@ import { AcademicService } from '../../services/academic.service';
 import { PaymentResourcesService } from '@payments/services/payment-resources.service';
 import { StudentsService } from '@students/services/students.service';
 import { Course } from '@academic/entities/course.entity';
-import { GetEligibleCoursesResponseDto } from '@academic/dtos/responses/get-eligible-courses-response.dto';
 import { StudentHistory } from '@students/entities/student-history.entity';
 import { HttpException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AcademicTerm } from '@academic/entities/academic-term.entity';
 
@@ -80,8 +78,8 @@ describe('AcademicService', () => {
       });
 
       const getMany = jest.fn().mockResolvedValue([
-        { id: 1, name: 'Course 1' },
-        { id: 2, name: 'Course 2' },
+        { id: 1, name: 'Course 1', offerings: [], prerequisites: [] },
+        { id: 2, name: 'Course 2', offerings: [], prerequisites: [] },
       ]);
       mockCourseRepository.createQueryBuilder.mockReturnValue({
         innerJoinAndSelect: () => ({
@@ -99,8 +97,6 @@ describe('AcademicService', () => {
         (course, history) => course.id === 2,
       );
 
-      const eligibleCourses = [{ id: 2, name: 'Course 2' }];
-
       const result = await service.getEligibleCourses(5, 'SEMESTER', 1, 1234);
 
       expect(mockPaymentResourcesService.getPaymentType).toHaveBeenCalledWith(
@@ -116,7 +112,7 @@ describe('AcademicService', () => {
       expect(mockStudentsService.getStudentHistory).toHaveBeenCalledWith(5);
 
       expect(result).toEqual({
-        eligibleCourses,
+        courses: [],
         programId: 10,
         academicTermId: 100,
       });
