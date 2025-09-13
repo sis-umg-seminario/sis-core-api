@@ -27,6 +27,7 @@
       "@example/*": ["src/modules/example/*"],
       "@payments/*": ["src/modules/payments/*"],
       "@students/*": ["src/modules/students/*"],
+      "@enrollments/*": ["src/modules/enrollments/*"],
       "@config/*": ["src/config/*"],
       "@common/*": ["src/common/*"]
     }
