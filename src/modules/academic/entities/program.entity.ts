@@ -15,6 +15,9 @@ export class Program {
   @Column({ name: 'description' })
   description: string;
 
+  @Column({ name: 'enrollment_fee', nullable: true })
+  enrollmentFee: string;
+
   @Column({
     name: 'created_at',
     type: 'timestamp',

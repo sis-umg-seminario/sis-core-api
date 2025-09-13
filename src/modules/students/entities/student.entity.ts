@@ -1,3 +1,5 @@
+// src\modules\students\entities\student.entity.ts
+
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { StudentProgram } from './student-program.entity';
 import { StudentHistory } from './student-history.entity';
@@ -31,9 +33,15 @@ export class Student {
   })
   createdAt: Date;
 
+  // --- CORRECCIÓN IMPORTANTE ---
+  // Le decimos explícitamente a TypeORM que un estudiante
+  // puede tener muchos historiales y muchos programas.
+  @OneToMany(() => StudentHistory, (history) => history.student)
   studentHistory: StudentHistory[];
 
+  @OneToMany(() => StudentProgram, (program) => program.student)
   studentPrograms: StudentProgram[];
+  // --- FIN DE LA CORRECCIÓN ---
 
   @OneToMany(() => PaymentOrder, (paymentOrder) => paymentOrder.student)
   paymentOrders: PaymentOrder[];
