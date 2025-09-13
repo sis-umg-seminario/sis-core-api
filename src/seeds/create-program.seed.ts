@@ -7,6 +7,7 @@ export async function seedProgram(dataSource: DataSource) {
     name: 'Ingeniería en Sistemas',
     description:
       'Licenciatura en Ingeniería en Sistemas y ciencias de la computación',
+    enrollmentFee: '1000',
   });
 
   return program;
