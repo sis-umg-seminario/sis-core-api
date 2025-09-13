@@ -1,17 +1,6 @@
-import { AcademicTerm } from '@academic/entities/academic-term.entity';
-import { CourseOffering } from '@academic/entities/course-offering.entity';
-import { CoursePrerequisite } from '@academic/entities/course-prerequisite.entity';
-import { Course } from '@academic/entities/course.entity';
-import { Program } from '@academic/entities/program.entity';
-import { TermType } from '@academic/entities/term-type.entity';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PaymentOrder } from '@payments/entities/payment-order.entity';
-import { PaymentType } from '@payments/entities/payment-type.entity';
-import { StudentHistory } from '@students/entities/student-history.entity';
-import { StudentProgram } from '@students/entities/student-program.entity';
-import { Student } from '@students/entities/student.entity';
 
 @Module({
   imports: [
