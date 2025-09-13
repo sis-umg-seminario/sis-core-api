@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { StudentProgram } from './student-program.entity';
 import { StudentHistory } from './student-history.entity';
 import { PaymentOrder } from '@payments/entities/payment-order.entity';
+import { Enrollment } from '@enrollments/enrollments/enrollment.entity';
 
 @Entity({ schema: 'students', name: 'student' })
 export class Student {
@@ -36,4 +37,7 @@ export class Student {
 
   @OneToMany(() => PaymentOrder, (paymentOrder) => paymentOrder.student)
   paymentOrders: PaymentOrder[];
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.student)
+  enrollments: Enrollment[];
 }

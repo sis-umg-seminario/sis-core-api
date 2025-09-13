@@ -41,6 +41,13 @@ export async function seedCourses(
           requiredCredits: 5,
         },
       ],
+      feeDefinitions: [
+        {
+          programId,
+          amount: 250,
+          feeScope: 'BASE',
+        },
+      ],
     },
     {
       name: 'Estructuras de Datos',
@@ -60,6 +67,13 @@ export async function seedCourses(
         {
           type: 'CREDITS',
           requiredCredits: 5,
+        },
+      ],
+      feeDefinitions: [
+        {
+          programId,
+          amount: 250,
+          feeScope: 'BASE',
         },
       ],
     },
@@ -83,6 +97,13 @@ export async function seedCourses(
           prerequisiteCourseId: course.courseId,
         },
       ],
+      feeDefinitions: [
+        {
+          programId,
+          amount: 250,
+          feeScope: 'BASE',
+        },
+      ],
     },
     {
       name: 'Análisis de Sistemas I',
@@ -102,6 +123,13 @@ export async function seedCourses(
         {
           type: 'CREDITS',
           requiredCredits: 20,
+        },
+      ],
+      feeDefinitions: [
+        {
+          programId,
+          amount: 250,
+          feeScope: 'BASE',
         },
       ],
     },

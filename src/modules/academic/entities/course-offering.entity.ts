@@ -8,6 +8,7 @@ import {
 import { Course } from './course.entity';
 import { Program } from './program.entity';
 import { AcademicTerm } from './academic-term.entity';
+import { EnrollmentCourse } from '@enrollments/enrollments/enrollment-course.entity';
 
 @Entity({ schema: 'academic', name: 'course_offering' })
 export class CourseOffering {
@@ -56,4 +57,6 @@ export class CourseOffering {
   @ManyToOne(() => AcademicTerm, (term) => term.courseOfferings)
   @JoinColumn({ name: 'term_id' })
   term: AcademicTerm;
+
+  enrollmentCourses: EnrollmentCourse[];
 }

@@ -44,4 +44,15 @@ export class PaymentResourcesService {
       );
     }
   }
+
+  public async savePaymentOrders(paymentOrders: Partial<PaymentOrder>[]) {
+    try {
+      await this.paymentOrderRepository.save(paymentOrders);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Error al guardar las órdenes de pago', error },
+        500,
+      );
+    }
+  }
 }
