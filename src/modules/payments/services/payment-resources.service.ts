@@ -44,4 +44,13 @@ export class PaymentResourcesService {
       );
     }
   }
+  public async getpaymenttypes() {
+    const result = await this.paymentTypeRepository.find();
+    return {
+      paymentTypes: result.map((item) => ({
+        id: item.paymentTypeId,
+        description: item.description,
+      })),
+    };
+  }
 }
