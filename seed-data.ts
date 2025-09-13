@@ -7,8 +7,11 @@ import { seedCourses } from 'src/seeds/create-course.seed';
 import { seedStudentHistory } from 'src/seeds/create-student-history.seed';
 import { seedStudentProgram } from 'src/seeds/create-student-program.seed';
 import { seedAcademicTerm } from 'src/seeds/create-academic-term.seed';
+import { truncateTables } from 'src/seeds/truncate-tables.seed';
+
 async function runSeeds() {
   await AppDataSource.initialize();
+  await truncateTables(AppDataSource);
   await seedPaymentTypes(AppDataSource);
   const student = await seedStudents(AppDataSource);
   const program = await seedProgram(AppDataSource);

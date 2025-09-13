@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { CourseOffering } from './course-offering.entity';
 import { TermType } from './term-type.entity';
+import { Enrollment } from '@enrollments/enrollments/enrollment.entity';
 
 @Entity({ schema: 'academic', name: 'academic_term' })
 export class AcademicTerm {
@@ -39,4 +40,7 @@ export class AcademicTerm {
   @ManyToOne(() => TermType, (type) => type.academicTerms)
   @JoinColumn({ name: 'term_type_id' })
   termType: TermType;
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.academicTerm)
+  enrollments: Enrollment[];
 }

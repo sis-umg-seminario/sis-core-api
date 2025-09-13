@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CourseOffering } from './course-offering.entity';
 import { CoursePrerequisite } from './course-prerequisite.entity';
 import { StudentHistory } from '@students/entities/student-history.entity';
+import { FeeDefinition } from './fee-definition.entity';
 
 @Entity({ schema: 'academic', name: 'course' })
 export class Course {
@@ -33,4 +34,9 @@ export class Course {
 
   @OneToMany(() => StudentHistory, (history) => history.course)
   studentHistory: StudentHistory[];
+
+  @OneToMany(() => FeeDefinition, (feeDefinition) => feeDefinition.course, {
+    cascade: true,
+  })
+  feeDefinitions: FeeDefinition[];
 }

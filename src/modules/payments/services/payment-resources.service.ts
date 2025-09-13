@@ -1,11 +1,9 @@
-// src\modules\payments\services\payment-resources.service.ts
-
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentOrder } from '@payments/entities/payment-order.entity';
 import { PaymentType } from '@payments/entities/payment-type.entity';
+import { StudentsService } from '@students/services/students.service';
 import { Repository } from 'typeorm';
-import { StudentsService } from '../../students/services/students.service';
 
 @Injectable()
 export class PaymentResourcesService {
@@ -71,5 +69,16 @@ export class PaymentResourcesService {
       paymentTypeId: paymentTypeId,
       enrollmentFee: enrollmentFee.toString(),
     };
+  }
+
+  public async savePaymentOrders(paymentOrders: Partial<PaymentOrder>[]) {
+    try {
+      await this.paymentOrderRepository.save(paymentOrders);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Error al guardar las órdenes de pago', error },
+        500,
+      );
+    }
   }
 }

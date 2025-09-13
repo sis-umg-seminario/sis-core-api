@@ -70,6 +70,51 @@ export class AcademicService {
     );
   }
 
+  public async getCourseOfferingsAndPrerequisitesByIds(offeringIds: number[]) {
+    return this.courseRepository
+      .createQueryBuilder('c')
+      .innerJoinAndSelect('c.offerings', 'co', 'co.offeringId IN (:...ids)', {
+        ids: offeringIds,
+      })
+      .innerJoinAndSelect('c.coursePrerequisites', 'cp')
+      .getMany();
+  }
+
+  public async getAcademicTerm(termId: number): Promise<AcademicTerm> {
+    const result = await this.academicTermRepository.findOne({
+      where: { termId },
+      relations: ['termType'],
+    });
+
+    if (!result) {
+      throw new HttpException(
+        { message: `No se encontró el período académico con ID ${termId}` },
+        404,
+      );
+    }
+
+    return result;
+  }
+
+  public async calculateAndReturnTotalCourseFees(
+    courseIds: number[],
+    programId: number,
+  ): Promise<number> {
+    const result = await this.courseRepository
+      .query(`select SUM(fd.amount) as total_fee from academic.course ac right join academic.fee_definition fd
+        on ac.course_id = fd.course_id
+        where ac.course_id IN(${courseIds.join(',')}) and fd.program_id = ${programId};`);
+
+    if (!result.length) {
+      throw new HttpException(
+        { message: `Error al obtener las tarifas de los cursos seleccionados` },
+        400,
+      );
+    }
+
+    return result[0].total_fee;
+  }
+
   private async searchAcademicTerm(termTypeName: string, startMonth: number) {
     return this.academicTermRepository
       .createQueryBuilder('at')

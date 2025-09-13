@@ -8,6 +8,7 @@ import { AcademicService } from './services/academic.service';
 import { StudentsModule } from '@students/students.module';
 import { AcademicTerm } from './entities/academic-term.entity';
 import { AcademicController } from './controllers/academic.controller';
+import { FeeDefinition } from './entities/fee-definition.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AcademicController } from './controllers/academic.controller';
       CourseOffering,
       CoursePrerequisite,
       AcademicTerm,
+      FeeDefinition,
     ]),
     PaymentsModule,
     StudentsModule,

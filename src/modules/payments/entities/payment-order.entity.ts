@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PaymentType } from './payment-type.entity';
@@ -22,6 +23,9 @@ export class PaymentOrder {
   @Column({ name: 'total_amount' })
   totalAmount: number;
 
+  @Column({ name: 'context_id', nullable: true })
+  contextId: number;
+
   @Column({ name: 'due_date' })
   dueDate: Date;
 
@@ -35,7 +39,10 @@ export class PaymentOrder {
   })
   createdAt: Date;
 
-  @Column({ name: 'auth_code' })
+  @Column({ name: 'description', nullable: true })
+  description: string;
+
+  @Column({ name: 'auth_code', nullable: true })
   authCode: string;
 
   @ManyToOne(() => PaymentType, (paymentType) => paymentType.paymentOrders)

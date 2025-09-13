@@ -1,6 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CourseOffering } from './course-offering.entity';
 import { StudentProgram } from '@students/entities/student-program.entity';
+import { Enrollment } from '@enrollments/enrollments/enrollment.entity';
+import { FeeDefinition } from './fee-definition.entity';
 
 @Entity({ schema: 'academic', name: 'program' })
 export class Program {
@@ -28,4 +30,10 @@ export class Program {
 
   @OneToMany(() => StudentProgram, (studentProgram) => studentProgram.program)
   studentPrograms: StudentProgram[];
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.program)
+  enrollments: Enrollment[];
+
+  @OneToMany(() => FeeDefinition, (feeDefinition) => feeDefinition.program)
+  feeDefinitions: FeeDefinition[];
 }
