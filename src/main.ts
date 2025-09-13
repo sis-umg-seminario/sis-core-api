@@ -6,6 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  const port = process.env.PORT || 3000;
+  console.log(`Starting server on port ${port}...`);
   const app = await NestFactory.create(AppModule);
 
   // Le decimos a nuestra app que use el "guardia de seguridad" para validar los datos
@@ -31,6 +33,8 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(port);
+  console.log(`🚀 App is running on http://localhost:${port}`);
 }
+
 bootstrap();
