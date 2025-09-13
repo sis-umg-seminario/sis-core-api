@@ -1,4 +1,5 @@
 {
   "builds": [{ "src": "package.json", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "src/main.ts" }]
+  "routes": [{ "src": "/(.*)", "dest": "src/main.ts" }],
+  "outputDirectory": "dist"
 }
