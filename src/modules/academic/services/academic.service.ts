@@ -1,7 +1,7 @@
 import { GetEligibleCoursesResponseDto } from '@academic/dtos/responses/get-eligible-courses-response.dto';
 import { AcademicTerm } from '@academic/entities/academic-term.entity';
 import { Course } from '@academic/entities/course.entity';
-import { HttpException, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentResourcesService } from '@payments/services/payment-resources.service';
 import { StudentHistory } from '@students/entities/student-history.entity';
@@ -9,6 +9,7 @@ import { isCourseEligible } from '@academic/utils/is-course-eligible';
 import { StudentsService } from '@students/services/students.service';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
+import { EnrollmentsService } from '@enrollments/services/enrollments.service';
 
 @Injectable()
 export class AcademicService {
@@ -19,6 +20,8 @@ export class AcademicService {
     private readonly academicTermRepository: Repository<AcademicTerm>,
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
+    @Inject(forwardRef(() => EnrollmentsService))
+    private readonly enrollmentsService: EnrollmentsService,
   ) {}
   public async getEligibleCourses(
     studentId: number,
@@ -26,6 +29,8 @@ export class AcademicService {
     startMonth: number,
     paymentCode: number,
   ) {
+    await this.enrollmentsService.validateStudentHasActiveEnrollment(studentId);
+
     const paymentTypeId =
       await this.paymentResourcesService.getPaymentType('ENROLLMENT');
 
