@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoursePrerequisite } from './entities/course-prerequisite.entity';
 import { CourseOffering } from './entities/course-offering.entity';
@@ -9,6 +9,7 @@ import { StudentsModule } from '@students/students.module';
 import { AcademicTerm } from './entities/academic-term.entity';
 import { AcademicController } from './controllers/academic.controller';
 import { FeeDefinition } from './entities/fee-definition.entity';
+import { EnrollmentsModule } from '@enrollments/enrollments.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { FeeDefinition } from './entities/fee-definition.entity';
     ]),
     PaymentsModule,
     StudentsModule,
+    forwardRef(() => EnrollmentsModule),
   ],
   controllers: [AcademicController],
   providers: [AcademicService],

@@ -15,7 +15,6 @@ export class PaymentResourcesService {
     private readonly studentsService: StudentsService,
   ) {}
 
-  // --- FUNCIÓN RESTAURADA 1 ---
   public async getPaymentType(paymentType: string): Promise<number> {
     const response = await this.paymentTypeRepository.findOne({
       where: { name: paymentType },
@@ -27,7 +26,6 @@ export class PaymentResourcesService {
     return response.paymentTypeId;
   }
 
-  // --- FUNCIÓN RESTAURADA 2 ---
   public async validatePayment(
     paymentTypeId: number,
     paymentCode: number,
@@ -47,7 +45,6 @@ export class PaymentResourcesService {
     }
   }
 
-  // Tu función que ya funcionaba
   public async getpaymenttypes() {
     const result = await this.paymentTypeRepository.find();
     return {
@@ -58,7 +55,6 @@ export class PaymentResourcesService {
     };
   }
 
-  // La nueva función que acabamos de agregar
   public async getPaymentFee(
     paymentTypeId: number,
     studentId: number,

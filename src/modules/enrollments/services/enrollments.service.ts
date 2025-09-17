@@ -1,6 +1,6 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
 import { AcademicService } from '@academic/services/academic.service';
-import { enrollStudentRequestDto } from '@enrollments/dtos/enroll-student-request.dto';
+import { EnrollStudentRequestDto } from '@enrollments/domain/dtos/enroll-student-request.dto';
 import { PaymentResourcesService } from '@payments/services/payment-resources.service';
 import { StudentsService } from '@students/services/students.service';
 import { isCourseEligible } from '@academic/utils/is-course-eligible';
@@ -11,20 +11,25 @@ import { Enrollment } from '@enrollments/enrollments/enrollment.entity';
 import { Repository } from 'typeorm';
 import { getMonth } from '@enrollments/utils/get-month';
 import { PaymentOrder } from '@payments/entities/payment-order.entity';
+import { EnrollmentStatus } from '@enrollments/domain/enums/enrollment-status.enum';
+import { CourseOfferingStatus } from '@enrollments/domain/enums/course-offering-status.enum';
 
 @Injectable()
 export class EnrollmentsService {
   constructor(
     private readonly paymentResourcesService: PaymentResourcesService,
+    @Inject(forwardRef(() => AcademicService))
     private readonly academicService: AcademicService,
     private readonly studentsService: StudentsService,
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
   ) {}
 
-  async enrollStudent(input: enrollStudentRequestDto) {
+  public async enrollStudent(input: EnrollStudentRequestDto) {
     const { studentId, termId, programId, paymentCode, offeringCourses } =
       input;
+    await this.validateStudentHasActiveEnrollment(studentId);
+
     const paymentTypeId =
       await this.paymentResourcesService.getPaymentType('ENROLLMENT');
 
@@ -59,10 +64,10 @@ export class EnrollmentsService {
       termId,
       programId,
       enrollmentDate: new Date(),
-      status: 'CONFIRMED',
+      status: EnrollmentStatus.ACTIVE,
       enrollmentCourses: offeringCourses.map((course) => ({
         offeringId: course.offeringId,
-        status: 'ENROLLED',
+        status: CourseOfferingStatus.ENROLLED,
       })),
     });
 
@@ -86,6 +91,21 @@ export class EnrollmentsService {
     await this.paymentResourcesService.savePaymentOrders(paymentOrders);
 
     return { message: 'Estudiante inscrito exitosamente' };
+  }
+
+  public async validateStudentHasActiveEnrollment(
+    studentId: number,
+  ): Promise<void> {
+    const activeEnrollment = await this.enrollmentRepository.findOne({
+      where: { studentId, status: EnrollmentStatus.ACTIVE },
+    });
+
+    if (activeEnrollment) {
+      throw new HttpException(
+        { message: 'El estudiante ya tiene una inscripción activa' },
+        400,
+      );
+    }
   }
 
   private validateCoursesToEnroll(
