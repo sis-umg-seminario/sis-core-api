@@ -90,7 +90,7 @@ export class EnrollmentsService {
 
     await this.paymentResourcesService.savePaymentOrders(paymentOrders);
 
-    return { message: 'Estudiante inscrito exitosamente' };
+    return { message: 'Estudiante inscrito exitosamente', status: 'Ok' };
   }
 
   public async validateStudentHasActiveEnrollment(
