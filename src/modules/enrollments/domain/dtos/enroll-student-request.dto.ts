@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 
-export class enrollStudentRequestDto {
+export class EnrollStudentRequestDto {
   @IsNotEmpty()
   studentId: number;
 

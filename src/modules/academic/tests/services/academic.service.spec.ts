@@ -7,6 +7,7 @@ import { StudentHistory } from '@students/entities/student-history.entity';
 import { HttpException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AcademicTerm } from '@academic/entities/academic-term.entity';
+import { EnrollmentsService } from '@enrollments/services/enrollments.service';
 
 const mockPaymentResourcesService = {
   getPaymentType: jest.fn(),
@@ -50,6 +51,12 @@ describe('AcademicService', () => {
         {
           provide: getRepositoryToken(Course),
           useValue: mockCourseRepository,
+        },
+        {
+          provide: EnrollmentsService,
+          useValue: {
+            validateStudentHasActiveEnrollment: jest.fn(),
+          },
         },
       ],
     }).compile();
