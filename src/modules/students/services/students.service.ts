@@ -65,4 +65,19 @@ export class StudentsService {
 
     return parseFloat(result.enrollmentFee);
   }
+  
+  public async getCourseSchedule(studentId: number, programId: number, termId: number) {
+    const result = await this.studentRepository.query(
+      `select c.course_id as "courseId", c."name", co."section", co.start_time as "startTime", co.end_time as "endTime"
+       from enrollments.enrollment e
+       right join enrollments.enrollment_course ec on e."enrollmentId" = ec.enrollment_id
+       right join academic.course_offering co on ec.offering_id = co.offering_id 
+       right join academic.course c on co.course_id = c.course_id 
+       where e.student_id = $1 and e.program_id = $2 and e.term_id = $3;`,
+      [studentId, programId, termId]
+    );
+    return result;
+  }
+
+
 }
