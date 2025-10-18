@@ -120,7 +120,7 @@ export class AcademicService {
     return result[0].total_fee;
   }
 
-  private async searchAcademicTerm(termTypeName: string, startMonth: number) {
+  public async searchAcademicTerm(termTypeName: string, startMonth: number) {
     return this.academicTermRepository
       .createQueryBuilder('at')
       .select('at.termId')
