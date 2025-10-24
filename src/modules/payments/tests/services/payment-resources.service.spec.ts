@@ -7,7 +7,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { PaymentOrder } from '@payments/entities/payment-order.entity';
 import { PaymentTransaction } from '@payments/entities/payment-transaction.entity';
 import { StudentsService } from '@students/services/students.service';
-import { EmailService } from '@common/email/email.service';
 
 describe('PaymentResourcesService', () => {
   let service: PaymentResourcesService;
@@ -40,12 +39,6 @@ describe('PaymentResourcesService', () => {
           },
         },
         {
-          provide: EmailService,
-          useValue: {
-            sendPaymentReceipt: jest.fn(),
-          },
-        },
-        {
           provide: StudentsService,
           useValue: {
             getStudentEnrollmentFee: jest.fn(),
@@ -57,7 +50,9 @@ describe('PaymentResourcesService', () => {
     service = module.get<PaymentResourcesService>(PaymentResourcesService);
     paymentTypeRepository = module.get(getRepositoryToken(PaymentType));
     paymentOrderRepository = module.get(getRepositoryToken(PaymentOrder));
-    paymentTransactionRepository = module.get(getRepositoryToken(PaymentTransaction));
+    paymentTransactionRepository = module.get(
+      getRepositoryToken(PaymentTransaction),
+    );
     // @ts-ignore
     studentsService = module.get(StudentsService);
   });
@@ -91,8 +86,12 @@ describe('PaymentResourcesService', () => {
       // Arrange
       // @ts-ignore
       studentsService.getStudentEnrollmentFee.mockResolvedValue(1000);
-      paymentOrderRepository.save.mockResolvedValue({ paymentOrderId: 1 } as any);
-      paymentTransactionRepository.save.mockResolvedValue({ paymentTransactionId: 1 } as any);
+      paymentOrderRepository.save.mockResolvedValue({
+        paymentOrderId: 1,
+      } as any);
+      paymentTransactionRepository.save.mockResolvedValue({
+        paymentTransactionId: 1,
+      } as any);
 
       // Act
       const result = await service.processPayment({
@@ -123,7 +122,10 @@ describe('PaymentResourcesService', () => {
           paymentTypeId: 10,
           paymentDetails: { amount: '1000' },
         } as any),
-      ).rejects.toMatchObject({ status: 400, response: { message: expect.any(String) } });
+      ).rejects.toMatchObject({
+        status: 400,
+        response: { message: expect.any(String) },
+      });
     });
 
     it('should throw 500 when saving payment order fails', async () => {
