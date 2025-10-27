@@ -6,6 +6,7 @@ import { StudentProgram } from './entities/student-program.entity';
 import { StudentsService } from './services/students.service';
 import { StudentsController } from './controllers/students.controller';
 import { AcademicModule } from '../academic/academic.module';
+import { AuthController } from './controllers/auth.controller';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { AcademicModule } from '../academic/academic.module';
   ],
   providers: [StudentsService],
   exports: [TypeOrmModule, StudentsService],
-  controllers: [StudentsController],
+  controllers: [StudentsController, AuthController],
 })
 export class StudentsModule {}
