@@ -1,3 +1,5 @@
+// src/modules/students/controllers/students.controller.ts
+
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StudentsService } from '@students/services/students.service';
 import { AcademicService } from '../../academic/services/academic.service';
@@ -42,7 +44,7 @@ export class StudentsController {
   }
 
   // -----------------------------
-  // 🔥 MOCK: Notas del estudiante
+  // MOCK: Notas del estudiante
   // Ejemplo:
   // GET /api/v1/students/2001/notas?semestre=2&anio=2023
   // -----------------------------
@@ -56,39 +58,39 @@ export class StudentsController {
     const anioNum = Number(anio);
 
     return {
-      estudiante: 'Axel Mauricio Véliz Poom',
-      semestre: semestreNum,
-      anio: anioNum,
-      notas: [
+      student: 'Axel Mauricio Véliz Poom',
+      semester: semestreNum,
+      year: anioNum,
+      grades: [
         {
-          curso: 'INVESTIGACIÓN DE OPERACIONES',
-          p1: 16,
-          p2: 14,
-          a: 46,
-          z: 25,
-          ef: 71,
-          nf: 71,
-          aprobado: true,
+          course: 'INVESTIGACIÓN DE OPERACIONES',
+          partial1: 16,
+          partial2: 14,
+          activities: 46,
+          preFinalScore: 25,
+          finalExam: 71,
+          finalGrade: 71,
+          passed: true,
         },
         {
-          curso: 'BASES DE DATOS I',
-          p1: 11,
-          p2: 19,
-          a: 45,
-          z: 15,
-          ef: 72,
-          nf: 72,
-          aprobado: true,
+          course: 'BASES DE DATOS I',
+          partial1: 11,
+          partial2: 19,
+          activities: 45,
+          preFinalScore: 15,
+          finalExam: 72,
+          finalGrade: 72,
+          passed: true,
         },
         {
-          curso: 'AUTÓMATAS Y LENGUAJES FORMALES',
-          p1: 15,
-          p2: 20,
-          a: 55,
-          z: 20,
-          ef: 75,
-          nf: 75,
-          aprobado: true,
+          course: 'AUTÓMATAS Y LENGUAJES FORMALES',
+          partial1: 15,
+          partial2: 20,
+          activities: 55,
+          preFinalScore: 20,
+          finalExam: 75,
+          finalGrade: 75,
+          passed: true,
         },
       ],
     };

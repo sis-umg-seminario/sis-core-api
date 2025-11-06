@@ -15,22 +15,22 @@ export class AuthController {
   // POST /api/v1/auth/login
   // Body:
   // {
-  //   "usuario": "axel.veliz",
-  //   "contrasena": "123456"
+  //   "username": "axel.veliz",
+  //   "password": "123456"
   // }
   // Regla mock: cualquier usuario con contrasena "123456" inicia sesión
   // -----------------------------
   @Post('/login')
-  login(@Body() body: { usuario?: string; contrasena?: string }) {
-    const usuario = (body?.usuario ?? '').trim();
-    const contrasena = body?.contrasena ?? '';
+  login(@Body() body: { username?: string; password?: string }) {
+    const username = (body?.username ?? '').trim();
+    const password = body?.password ?? '';
 
     // Validaciones básicas de request
-    if (!usuario || !contrasena) {
+    if (!username || !password) {
       throw new HttpException(
         {
           error: 'Bad Request',
-          message: 'Los campos "usuario" y "contrasena" son requeridos',
+          message: 'Los campos "username" y "password" son requeridos',
           statusCode: HttpStatus.BAD_REQUEST,
         },
         HttpStatus.BAD_REQUEST,
@@ -38,7 +38,7 @@ export class AuthController {
     }
 
     // Regla mock de autenticación
-    if (contrasena !== '123456') {
+    if (password !== '123456') {
       throw new HttpException(
         {
           error: 'Unauthorized',
@@ -50,26 +50,26 @@ export class AuthController {
     }
 
     // Datos mock del usuario autenticado
-    const usuarioMock = {
+    const userMock = {
       id: 2001,
-      nombre: 'Axel Mauricio Véliz Poom',
-      correo: 'axel.veliz@umg.edu.gt',
-      programa: 'Ingeniería de Sistemas',
+      name: 'Axel Mauricio Véliz Poom',
+      email: 'axel.veliz@umg.edu.gt',
+      program: 'Ingeniería de Sistemas',
       roles: ['STUDENT'], // Ej: ADMIN, TEACHER, STUDENT
     };
 
     // Tokens mock (strings fijos). En real, aquí iría JWT/exp dinámica.
     const token = 'mock-token-umg-abc123';
     const refreshToken = 'mock-refresh-xyz789';
-    const expiraEnSegundos = 7200; // 2 horas
+    const expiresInSeconds = 7200; // 2 horas
 
     return {
-      autenticado: true,
+      authenticated: true,
       token,
-      tipoToken: 'Bearer',
-      expiraEnSegundos,
+      tokenType: 'Bearer',
+      expiresInSeconds,
       refreshToken,
-      usuario: usuarioMock,
+      user: userMock,
     };
   }
 
@@ -78,10 +78,10 @@ export class AuthController {
   // POST /api/v1/auth/change-password
   // Body:
   // {
-  //   "usuario": "axel.veliz",
-  //   "contrasenaActual": "123456",
-  //   "nuevaContrasena": "NuevaClave2025",
-  //   "confirmarContrasena": "NuevaClave2025"
+  //   "username": "axel.veliz",
+  //   "currentPassword": "123456",
+  //   "newPassword": "NuevaClave2025",
+  //   "confirmPassword": "NuevaClave2025"
   // }
   // Reglas mock:
   //  - contrasenaActual debe ser "123456"
@@ -91,29 +91,24 @@ export class AuthController {
   changePassword(
     @Body()
     body: {
-      usuario?: string;
-      contrasenaActual?: string;
-      nuevaContrasena?: string;
-      confirmarContrasena?: string;
+      username?: string;
+      currentPassword?: string;
+      newPassword?: string;
+      confirmPassword?: string;
     },
   ) {
-    const usuario = (body?.usuario ?? '').trim();
-    const contrasenaActual = body?.contrasenaActual ?? '';
-    const nuevaContrasena = body?.nuevaContrasena ?? '';
-    const confirmarContrasena = body?.confirmarContrasena ?? '';
+    const username = (body?.username ?? '').trim();
+    const currentPassword = body?.currentPassword ?? '';
+    const newPassword = body?.newPassword ?? '';
+    const confirmPassword = body?.confirmPassword ?? '';
 
     // Validaciones básicas
-    if (
-      !usuario ||
-      !contrasenaActual ||
-      !nuevaContrasena ||
-      !confirmarContrasena
-    ) {
+    if (!username || !currentPassword || !newPassword || !confirmPassword) {
       throw new HttpException(
         {
           error: 'Bad Request',
           message:
-            'Los campos "usuario", "contrasenaActual", "nuevaContrasena" y "confirmarContrasena" son requeridos',
+            'Los campos "username", "currentPassword", "newPassword" y "confirmPassword" son requeridos',
           statusCode: HttpStatus.BAD_REQUEST,
         },
         HttpStatus.BAD_REQUEST,
@@ -121,7 +116,7 @@ export class AuthController {
     }
 
     // Validar contraseña actual (mock)
-    if (contrasenaActual !== '123456') {
+    if (currentPassword !== '123456') {
       throw new HttpException(
         {
           error: 'Unauthorized',
@@ -133,7 +128,7 @@ export class AuthController {
     }
 
     // Validar coincidencia
-    if (nuevaContrasena !== confirmarContrasena) {
+    if (newPassword !== confirmPassword) {
       throw new HttpException(
         {
           error: 'Bad Request',
@@ -148,12 +143,12 @@ export class AuthController {
     //  - al menos 8 caracteres
     //  - contiene letras y números
     //  - distinta a la contraseña actual
-    const tieneLongitudValida = nuevaContrasena.length >= 8;
-    const tieneLetra = /[A-Za-z]/.test(nuevaContrasena);
-    const tieneNumero = /[0-9]/.test(nuevaContrasena);
-    const esDistinta = nuevaContrasena !== contrasenaActual;
+    const hasValidLength = newPassword.length >= 8;
+    const hasLetter = /[A-Za-z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+    const isDifferent = newPassword !== currentPassword;
 
-    if (!tieneLongitudValida || !tieneLetra || !tieneNumero || !esDistinta) {
+    if (!hasValidLength || !hasLetter || !hasNumber || !isDifferent) {
       throw new HttpException(
         {
           error: 'Bad Request',
@@ -167,14 +162,14 @@ export class AuthController {
 
     // Respuesta mock de éxito
     return {
-      actualizado: true,
-      mensaje: 'Contraseña actualizada correctamente',
-      usuario: {
+      updated: true,
+      message: 'Contraseña actualizada correctamente',
+      user: {
         id: 2001,
-        nombre: 'Axel Mauricio Véliz Poom',
-        correo: 'axel.veliz@umg.edu.gt',
+        name: 'Axel Mauricio Véliz Poom',
+        email: 'axel.veliz@umg.edu.gt',
       },
-      fecha: new Date().toISOString(),
+      date: new Date().toISOString(),
     };
   }
 }
