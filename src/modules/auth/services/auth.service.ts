@@ -1,0 +1,146 @@
+// src/auth/auth.service.ts
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+import { RedisService } from './redis.service';
+import { ConfigService } from '@nestjs/config';
+
+const users = [
+  {
+    id: 1,
+    email: 'johndoe@example.com',
+    name: 'John Doe',
+    studentId: 1,
+    role: 'student',
+  },
+  {
+    id: 2,
+    email: 'janedoe@example.com',
+    name: 'Jane Doe',
+    professorId: 1,
+    role: 'professor',
+  },
+];
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private jwtService: JwtService,
+    private redisService: RedisService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private async validateUser(email: string, pass: string) {
+    const user = users.find((u) => u.email === email);
+    if (!user) throw new UnauthorizedException('Credenciales inválidas');
+
+    const hashedPass = await bcrypt.hash('secret', 10);
+    const match = await bcrypt.compare(pass, hashedPass);
+    if (!match) throw new UnauthorizedException('Credenciales inválidas');
+
+    return user;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password);
+    const accessToken = this.createAccessToken(user);
+    const refreshTokenResult = await this.createRefreshToken(null, user);
+    return {
+      accessToken,
+      refreshToken: refreshTokenResult.token,
+      refreshTokenExpiresIn: refreshTokenResult.expiresInSeconds,
+    };
+  }
+
+  private createAccessToken(payload) {
+    const accessPayload = { ...payload, type: 'access' };
+    return this.jwtService.sign(accessPayload, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: '15m',
+    });
+  }
+
+  private async createRefreshToken(payload, user: any) {
+    const jti = uuidv4();
+    const refreshPayload = {
+      ...payload,
+      jti,
+      type: 'refresh',
+    };
+    const token = this.jwtService.sign(refreshPayload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: '7d',
+    });
+
+    const hashed = await bcrypt.hash(token, 10);
+    const redisKey = `refresh:${user.id}:${jti}`;
+
+    const ttlSeconds = 7 * 24 * 60 * 60;
+
+    await this.redisService.getClient().set(redisKey, hashed, 'EX', ttlSeconds);
+
+    return { token, jti, expiresInSeconds: ttlSeconds };
+  }
+
+  async refresh(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      }) as any;
+
+      if (payload.type !== 'refresh') throw new Error('Not a refresh token');
+
+      const userId = payload.sub;
+      const jti = payload.jti;
+      const redisKey = `refresh:${userId}:${jti}`;
+      const storedHashed = await this.redisService.getClient().get(redisKey);
+      if (!storedHashed)
+        throw new UnauthorizedException('Refresh token revoked');
+
+      const matches = await bcrypt.compare(refreshToken, storedHashed);
+      if (!matches) throw new UnauthorizedException('Invalid refresh token');
+
+      await this.redisService.getClient().del(redisKey);
+
+      const accessToken = this.createAccessToken({
+        id: userId,
+        username: payload.username,
+      });
+      const refreshTokenResult = await this.createRefreshToken(null, {
+        id: userId,
+      });
+
+      return {
+        accessToken,
+        refreshToken: refreshTokenResult.token,
+        refreshTokenExpiresIn: refreshTokenResult.expiresInSeconds,
+      };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async logout(userId: number, jti?: string) {
+    if (jti) {
+      const k = `refresh:${userId}:${jti}`;
+      await this.redisService.getClient().del(k);
+      return;
+    }
+
+    const client = this.redisService.getClient();
+    const stream = client.scanStream({
+      match: `refresh:${userId}:*`,
+      count: 100,
+    });
+    const keys: string[] = [];
+    for await (const resultKeys of stream) {
+      if (resultKeys.length) keys.push(...resultKeys);
+    }
+    if (keys.length) await client.del(...keys);
+  }
+}

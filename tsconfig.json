@@ -30,7 +30,8 @@
       "@enrollments/*": ["src/modules/enrollments/*"],
       "@professor/*": ["src/modules/professor/*"],
       "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@auth/*": ["src/modules/auth/*"]
     }
   }
 }
