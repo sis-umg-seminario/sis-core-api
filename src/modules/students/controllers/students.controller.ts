@@ -93,4 +93,17 @@ export class StudentsController {
       ],
     };
   }
+
+  @Get('/:studentId/profile')
+  getStudentProfile(@Param('studentId') _: number) {
+    return {
+      studentId: 1,
+      name: 'John Doe',
+      program: {
+        id: 1,
+        name: 'Ingeniería de Sistemas',
+      },
+      creditsEarned: 45,
+    };
+  }
 }

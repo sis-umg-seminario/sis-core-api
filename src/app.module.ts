@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@config/database.module';
 import { EnrollmentsModule } from '@enrollments/enrollments.module';
 import { ProfessorModule } from '@professor/professor.module';
+import { AuthModule } from '@auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ProfessorModule } from '@professor/professor.module';
     DatabaseModule,
     EnrollmentsModule,
     ProfessorModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
