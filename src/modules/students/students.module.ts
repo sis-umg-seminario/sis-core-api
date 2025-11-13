@@ -7,11 +7,13 @@ import { StudentsService } from './services/students.service';
 import { StudentsController } from './controllers/students.controller';
 import { AcademicModule } from '../academic/academic.module';
 import { AuthController } from './controllers/auth.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Student, StudentHistory, StudentProgram]),
     forwardRef(() => AcademicModule),
+    JwtModule.register({}),
   ],
   providers: [StudentsService],
   exports: [TypeOrmModule, StudentsService],
