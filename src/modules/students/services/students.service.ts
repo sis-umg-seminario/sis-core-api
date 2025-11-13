@@ -65,8 +65,12 @@ export class StudentsService {
 
     return parseFloat(result.enrollmentFee);
   }
-  
-  public async getCourseSchedule(studentId: number, programId: number, termId: number) {
+
+  public async getCourseSchedule(
+    studentId: number,
+    programId: number,
+    termId: number,
+  ) {
     const result = await this.studentRepository.query(
       `select c.course_id as "courseId", c."name", co."section", co.start_time as "startTime", co.end_time as "endTime"
        from enrollments.enrollment e
@@ -74,19 +78,21 @@ export class StudentsService {
        right join academic.course_offering co on ec.offering_id = co.offering_id 
        right join academic.course c on co.course_id = c.course_id 
        where e.student_id = $1 and e.program_id = $2 and e.term_id = $3;`,
-      [studentId, programId, termId]
+      [studentId, programId, termId],
     );
     return result;
   }
 
   // Devuelve la información completa del estudiante (incluye email)
   public async getStudentById(studentId: number): Promise<Student> {
-    const student = await this.studentRepository.findOne({ where: { studentId } });
+    const student = await this.studentRepository.findOne({
+      where: { studentId },
+    });
     if (!student) {
-      throw new NotFoundException(`Estudiante con ID ${studentId} no encontrado`);
+      throw new NotFoundException(
+        `Estudiante con ID ${studentId} no encontrado`,
+      );
     }
     return student;
   }
-
-
 }
