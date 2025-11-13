@@ -95,4 +95,64 @@ export class StudentsController {
       ],
     };
   }
+
+  @Get('/student-grades')
+  getStudentGrades(
+    @Query('startMonth') __: number,
+    @Query('termType') ___: string,
+  ) {
+    return {
+      courses: [
+        {
+          courseId: 1,
+          name: 'Algoritmos y Estructuras de Datos',
+          scores: [
+            { type: 'midtermExam1', value: 10 },
+            { type: 'midtermExam2', value: 20 },
+            { type: 'assignments', value: 35 },
+            { type: 'final', value: 35 },
+          ],
+          total: 100,
+          status: 'APPROVED',
+        },
+        {
+          courseId: 2,
+          name: 'Analisis Matemático I',
+          scores: [
+            { type: 'midtermExam1', value: 12 },
+            { type: 'midtermExam2', value: 18 },
+            { type: 'assignments', value: 30 },
+            { type: 'final', value: 25 },
+          ],
+          total: 85,
+          status: 'APPROVED',
+        },
+        {
+          courseId: 3,
+          name: 'Introducción a la Programación',
+          scores: [
+            { type: 'midtermExam1', value: 8 },
+            { type: 'midtermExam2', value: 15 },
+            { type: 'assignments', value: 25 },
+            { type: 'final', value: 10 },
+          ],
+          total: 58,
+          status: 'FAILED',
+        },
+      ],
+    };
+  }
+
+  @Get('/student-profile')
+  getStudentProfile() {
+    return {
+      studentId: 1,
+      name: 'John Doe',
+      program: {
+        id: 1,
+        name: 'Ingeniería de Sistemas',
+      },
+      creditsEarned: 45,
+    };
+  }
 }

@@ -4,13 +4,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentType } from './entities/payment-type.entity';
 import { PaymentOrder } from './entities/payment-order.entity';
+import { PaymentTransaction } from './entities/payment-transaction.entity';
 import { PaymentResourcesService } from './services/payment-resources.service';
 import { PaymentsController } from './controllers/payments.controller';
 import { StudentsModule } from '../students/students.module'; // Importamos el módulo de Estudiantes
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PaymentOrder, PaymentType]),
+  TypeOrmModule.forFeature([PaymentOrder, PaymentType, PaymentTransaction]),
     StudentsModule, // Conectamos "Pagos" con "Estudiantes"
   ],
   exports: [TypeOrmModule, PaymentResourcesService],

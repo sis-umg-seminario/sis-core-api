@@ -79,5 +79,14 @@ export class StudentsService {
     return result;
   }
 
+  // Devuelve la información completa del estudiante (incluye email)
+  public async getStudentById(studentId: number): Promise<Student> {
+    const student = await this.studentRepository.findOne({ where: { studentId } });
+    if (!student) {
+      throw new NotFoundException(`Estudiante con ID ${studentId} no encontrado`);
+    }
+    return student;
+  }
+
 
 }

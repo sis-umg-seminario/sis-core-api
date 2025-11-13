@@ -1,8 +1,9 @@
 // src\modules\payments\controllers\payments.controller.ts
 
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body } from '@nestjs/common';
 import { PaymentResourcesService } from '@payments/services/payment-resources.service';
 import { GetPaymentFeeDto } from '../dtos/get-payment-fee.dto'; // Importamos nuestro "formulario oficial"
+import { ProcessPaymentDto } from '../dtos/process-payment.dto';
 
 @Controller('/api/v1/payments')
 export class PaymentsController {
@@ -13,6 +14,11 @@ export class PaymentsController {
   @Get('/paymentTypes')
   getpaymenttypes() {
     return this.paymentresourceservice.getpaymenttypes();
+  }
+
+  @Post('/processPayment')
+  processPayment(@Body() body: ProcessPaymentDto) {
+    return this.paymentresourceservice.processPayment(body as any);
   }
 
   // --- NUEVA VENTANILLA DE ATENCIÓN ---

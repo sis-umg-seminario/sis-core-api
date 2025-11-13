@@ -28,8 +28,10 @@
       "@payments/*": ["src/modules/payments/*"],
       "@students/*": ["src/modules/students/*"],
       "@enrollments/*": ["src/modules/enrollments/*"],
+      "@professor/*": ["src/modules/professor/*"],
       "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@auth/*": ["src/modules/auth/*"]
     }
   }
 }
