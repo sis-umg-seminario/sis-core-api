@@ -8,23 +8,6 @@ import { Repository } from 'typeorm';
 import { User } from '@auth/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
-const users = [
-  {
-    id: 1,
-    email: 'johndoe@example.com',
-    name: 'John Doe',
-    studentId: 1,
-    role: 'student',
-  },
-  {
-    id: 2,
-    email: 'janedoe@example.com',
-    name: 'Jane Doe',
-    professorId: 1,
-    role: 'professor',
-  },
-];
-
 @Injectable()
 export class AuthService {
   constructor(
