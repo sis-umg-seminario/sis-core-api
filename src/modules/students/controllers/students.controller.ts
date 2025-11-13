@@ -1,9 +1,21 @@
 // src/modules/students/controllers/students.controller.ts
 
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { StudentsService } from '@students/services/students.service';
 import { AcademicService } from '../../academic/services/academic.service';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { ProfileInformationDto } from '@auth/dtos/profile-information.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('/api/v1/students')
 export class StudentsController {
   constructor(
@@ -17,11 +29,8 @@ export class StudentsController {
     @Query('startMonth') startMonth: number,
     @Query('termType') termType: string,
   ) {
-    // 1.2 Consulta de carrera
     const programId = await this.studentsService.getEnrolledCareer(studentId);
 
-    // 1.3 Consulta de semestre
-    // ensure startMonth is a number (query params arrive as strings)
     const monthNumber = Number(startMonth);
     const academicTerm = await this.academicService.searchAcademicTerm(
       termType,
@@ -32,22 +41,15 @@ export class StudentsController {
     }
     const termId = academicTerm.termId;
 
-    // 1.4 Consulta de horario de cursos
     const courses = await this.studentsService.getCourseSchedule(
       studentId,
       programId,
       termId,
     );
 
-    // 1.5 Respuesta
     return { courses };
   }
 
-  // -----------------------------
-  // MOCK: Notas del estudiante
-  // Ejemplo:
-  // GET /api/v1/students/2001/notas?semestre=2&anio=2023
-  // -----------------------------
   @Get('/:studentId/notas')
   getNotasEstudiante(
     @Param('studentId') studentId: number,
@@ -154,5 +156,24 @@ export class StudentsController {
       },
       creditsEarned: 45,
     };
+  }
+
+  @Get('/student-history')
+  @UseGuards(JwtAuthGuard)
+  async getStudentHistory(@Req() request: { user: ProfileInformationDto }) {
+    const studentHistory = await this.studentsService.getStudentHistory(
+      request.user.studentId,
+    );
+    if (!studentHistory || !studentHistory.length) {
+      throw new NotFoundException(
+        `No se encontró historial para el estudiante con ID ${request.user.studentId}`,
+      );
+    }
+
+    const totalCreditsEarned = studentHistory.reduce(
+      (sum, record) => sum + record.creditsEarned,
+      0,
+    );
+    return { studentHistory, totalCreditsEarned };
   }
 }
