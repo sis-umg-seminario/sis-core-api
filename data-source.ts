@@ -10,8 +10,5 @@ export default new DataSource({
   database: process.env.POSTGRES_DB,
   entities: ['dist/src/**/*.entity.js'],
   migrations: ['dist/src/migrations/**/*{.ts,.js}'],
-  ssl:
-    process.env.NODE_ENV === 'production'
-      ? { rejectUnauthorized: false }
-      : false,
+  ssl: { rejectUnauthorized: false },
 });

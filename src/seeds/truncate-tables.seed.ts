@@ -14,6 +14,10 @@ export async function truncateTables(dataSource) {
     'academic.academic_term',
     'academic.fee_definition',
     'payments.payment_type',
+    'auth.user_role',
+    'auth.role',
+    'professors.professor',
+    'auth.user',
   ];
 
   for (const tableName of tableNames) {
