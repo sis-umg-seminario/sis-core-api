@@ -41,83 +41,77 @@ export class PaymentsController {
   @Get('/account-statement')
   getAccountStatement(
     @Query('studentId') studentId: number,
-    @Query('anio') anio: number,
-    @Query('semestre') semestre: number,
+    @Query('year') year: number,
+    @Query('startMonth') startMonth: number,
+    @Query('termType') _: string,
   ) {
     const studentIdNum = Number(studentId);
-    const anioNum = Number(anio);
-    const semestreNum = Number(semestre);
-    const periodoTitulo =
-      semestreNum === 1
-        ? `Primer Semestre ${anioNum}`
-        : `Segundo Semestre ${anioNum}`;
+    const anioNum = Number(year);
 
     return {
       studentId: studentIdNum,
-      estudiante: 'Axel Mauricio Véliz Poom',
-      programa: 'Ingeniería de Sistemas',
-      moneda: 'GTQ',
-      periodo: {
-        anio: anioNum,
-        semestre: semestreNum,
-        titulo: periodoTitulo,
+      Name: 'Axel Mauricio Véliz Poom',
+      program: 'Ingeniería de Sistemas',
+      currency: 'GTQ',
+      period: {
+        year: anioNum,
+        academicTerm: 2,
+        title: 'Segundo Semestre',
       },
-      estado: 'PENDIENTE', // AL_DIA | PENDIENTE | EN_MORA
+      status: 'PENDIENTE', // AL_DIA | PENDIENTE | EN_MORA
       items: [
         {
-          fecha: '2023-01-10',
-          documento: 'ORD-2023-0001',
-          concepto: 'Inscripción',
-          tipo: 'CARGO', // CARGO | ABONO
-          monto: 350.0,
-          pagado: true,
-          fechaPago: '2023-01-12',
-          medioPago: 'Tarjeta',
+          transactionId: 1,
+          date: '2023-01-10',
+          document: 'ORD-2023-0001',
+          description: 'Inscripción',
+          type: 'CARGO', // CARGO | ABONO
+          amount: 350.0,
+          paid: true,
+          paymentDate: '2023-01-12',
+          paymentType: 'ENROLLMENT',
         },
         {
-          fecha: '2023-02-05',
-          documento: 'MEN-2023-02',
-          concepto: 'Mensualidad Febrero',
-          tipo: 'CARGO',
-          monto: 600.0,
-          pagado: true,
-          fechaPago: '2023-02-05',
-          medioPago: 'Transferencia',
+          transactionId: 2,
+          date: '2023-02-05',
+          document: 'MEN-2023-02',
+          description: 'Mensualidad Febrero',
+          type: 'CARGO',
+          amount: 600.0,
+          paid: true,
+          paymentDate: '2023-02-05',
+          paymentType: 'MONTHLY',
         },
         {
-          fecha: '2023-03-05',
-          documento: 'MEN-2023-03',
-          concepto: 'Mensualidad Marzo',
-          tipo: 'CARGO',
-          monto: 600.0,
-          pagado: false,
-          fechaVencimiento: '2023-03-10',
-          diasAtraso: 15,
+          transactionId: 3,
+          date: '2023-03-05',
+          document: 'MEN-2023-03',
+          description: 'Mensualidad Marzo',
+          type: 'CARGO',
+          amount: 600.0,
+          paid: false,
+          dueDate: '2023-03-10',
+          daysOverdue: 15,
+          paymentType: 'MONTHLY',
         },
         {
-          fecha: '2023-03-20',
-          documento: 'PAG-2023-1034',
-          concepto: 'Pago parcial',
-          tipo: 'ABONO',
-          monto: 300.0,
-          referencia: 'POS-12345',
-        },
-        {
-          fecha: '2023-04-05',
-          documento: 'MEN-2023-04',
-          concepto: 'Mensualidad Abril',
-          tipo: 'CARGO',
-          monto: 600.0,
-          pagado: false,
-          fechaVencimiento: '2023-04-10',
-          diasAtraso: 0,
+          transactionId: 5,
+          date: '2023-04-05',
+          document: 'MEN-2023-04',
+          description: 'Mensualidad Abril',
+          type: 'CARGO',
+          amount: 600.0,
+          paid: false,
+          dueDate: '2023-04-10',
+          daysOverdue: 0,
+          paymentType: 'MONTHLY',
         },
       ],
-      totales: {
-        totalCargos: 2150.0,
-        totalAbonos: 300.0,
-        saldo: 1850.0,
-        fechaCorte: '2023-04-15',
+      totals: {
+        totalCharges: 2150.0,
+        totalPayments: 300.0,
+        balance: 1850.0,
+        statementDate: '2023-04-15',
       },
     };
   }
