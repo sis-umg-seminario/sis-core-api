@@ -41,16 +41,12 @@ export class PaymentsController {
   @Get('/account-statement')
   getAccountStatement(
     @Query('studentId') studentId: number,
-    @Query('anio') anio: number,
-    @Query('semestre') semestre: number,
+    @Query('year') year: number,
+    @Query('startMonth') startMonth: number,
+    @Query('termType') _: string,
   ) {
     const studentIdNum = Number(studentId);
-    const anioNum = Number(anio);
-    const semestreNum = Number(semestre);
-    const periodoTitulo =
-      semestreNum === 1
-        ? `Primer Semestre ${anioNum}`
-        : `Segundo Semestre ${anioNum}`;
+    const anioNum = Number(year);
 
     return {
       studentId: studentIdNum,
@@ -59,12 +55,13 @@ export class PaymentsController {
       currency: 'GTQ',
       period: {
         year: anioNum,
-        semester: semestreNum,
-        title: periodoTitulo,
+        academicTerm: 2,
+        title: 'Segundo Semestre',
       },
       status: 'PENDIENTE', // AL_DIA | PENDIENTE | EN_MORA
       items: [
         {
+          transactionId: 1,
           date: '2023-01-10',
           document: 'ORD-2023-0001',
           description: 'Inscripción',
@@ -72,9 +69,10 @@ export class PaymentsController {
           amount: 350.0,
           paid: true,
           paymentDate: '2023-01-12',
-          paymentMethod: 'Tarjeta',
+          paymentType: 'ENROLLMENT',
         },
         {
+          transactionId: 2,
           date: '2023-02-05',
           document: 'MEN-2023-02',
           description: 'Mensualidad Febrero',
@@ -82,9 +80,10 @@ export class PaymentsController {
           amount: 600.0,
           paid: true,
           paymentDate: '2023-02-05',
-          paymentMethod: 'Transferencia',
+          paymentType: 'MONTHLY',
         },
         {
+          transactionId: 3,
           date: '2023-03-05',
           document: 'MEN-2023-03',
           description: 'Mensualidad Marzo',
@@ -93,16 +92,10 @@ export class PaymentsController {
           paid: false,
           dueDate: '2023-03-10',
           daysOverdue: 15,
+          paymentType: 'MONTHLY',
         },
         {
-          date: '2023-03-20',
-          document: 'PAG-2023-1034',
-          description: 'Pago parcial',
-          type: 'ABONO',
-          amount: 300.0,
-          reference: 'POS-12345',
-        },
-        {
+          transactionId: 5,
           date: '2023-04-05',
           document: 'MEN-2023-04',
           description: 'Mensualidad Abril',
@@ -111,6 +104,7 @@ export class PaymentsController {
           paid: false,
           dueDate: '2023-04-10',
           daysOverdue: 0,
+          paymentType: 'MONTHLY',
         },
       ],
       totals: {
