@@ -8,12 +8,21 @@ import { seedStudentHistory } from 'src/seeds/create-student-history.seed';
 import { seedStudentProgram } from 'src/seeds/create-student-program.seed';
 import { seedAcademicTerm } from 'src/seeds/create-academic-term.seed';
 import { truncateTables } from 'src/seeds/truncate-tables.seed';
+import { seedRoles } from 'src/seeds/create-roles.seed';
+import { seedUsers } from 'src/seeds/create-users.seed';
+import { seedProfessors } from 'src/seeds/create-professors.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
   await truncateTables(AppDataSource);
   await seedPaymentTypes(AppDataSource);
-  const student = await seedStudents(AppDataSource);
+  const roles = await seedRoles(AppDataSource);
+  const users = await seedUsers(
+    AppDataSource,
+    roles.map((role) => role.roleId),
+  );
+  const student = await seedStudents(AppDataSource, users[0].userId);
+  await seedProfessors(AppDataSource, users[1].userId);
   const program = await seedProgram(AppDataSource);
   await seedStudentProgram(AppDataSource, student.studentId, program.programId);
   const termType = await seedTermType(AppDataSource);

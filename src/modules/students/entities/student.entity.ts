@@ -1,15 +1,24 @@
-// src\modules\students\entities\student.entity.ts
-
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { StudentProgram } from './student-program.entity';
 import { StudentHistory } from './student-history.entity';
 import { PaymentOrder } from '@payments/entities/payment-order.entity';
 import { Enrollment } from '@enrollments/enrollments/enrollment.entity';
+import { User } from '@auth/entities/user.entity';
 
 @Entity({ schema: 'students', name: 'student' })
 export class Student {
   @PrimaryGeneratedColumn({ name: 'student_id' })
   studentId: number;
+
+  @Column({ name: 'user_id', nullable: true })
+  userId: number;
 
   @Column({ name: 'first_name' })
   firstName: string;
@@ -33,19 +42,19 @@ export class Student {
   })
   createdAt: Date;
 
-  // --- CORRECCIÓN IMPORTANTE ---
-  // Le decimos explícitamente a TypeORM que un estudiante
-  // puede tener muchos historiales y muchos programas.
   @OneToMany(() => StudentHistory, (history) => history.student)
   studentHistory: StudentHistory[];
 
   @OneToMany(() => StudentProgram, (program) => program.student)
   studentPrograms: StudentProgram[];
-  // --- FIN DE LA CORRECCIÓN ---
 
   @OneToMany(() => PaymentOrder, (paymentOrder) => paymentOrder.student)
   paymentOrders: PaymentOrder[];
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.student)
   enrollments: Enrollment[];
+
+  @OneToOne(() => User, (user) => user.student)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

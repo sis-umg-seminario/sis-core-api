@@ -1,31 +1,12 @@
-// src/auth/auth.service.ts
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from './redis.service';
 import { ConfigService } from '@nestjs/config';
-
-const users = [
-  {
-    id: 1,
-    email: 'johndoe@example.com',
-    name: 'John Doe',
-    studentId: 1,
-    role: 'student',
-  },
-  {
-    id: 2,
-    email: 'janedoe@example.com',
-    name: 'Jane Doe',
-    professorId: 1,
-    role: 'professor',
-  },
-];
+import { Repository } from 'typeorm';
+import { User } from '@auth/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuthService {
@@ -33,17 +14,32 @@ export class AuthService {
     private jwtService: JwtService,
     private redisService: RedisService,
     private readonly configService: ConfigService,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   private async validateUser(email: string, pass: string) {
-    const user = users.find((u) => u.email === email);
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: [
+        'student',
+        'professor',
+        'userRoles',
+        'userRoles.role',
+        'student.studentPrograms.program',
+      ],
+    });
     if (!user) throw new UnauthorizedException('Credenciales inválidas');
 
-    const hashedPass = await bcrypt.hash('secret', 10);
-    const match = await bcrypt.compare(pass, hashedPass);
+    const match = await bcrypt.compare(pass, user.password);
     if (!match) throw new UnauthorizedException('Credenciales inválidas');
 
-    return user;
+    const userPayload = {
+      userId: user.userId,
+      email: user.email,
+      roles: user.userRoles.map((ur) => ur.role.roleName),
+      profileInformation: user.student || user.professor,
+    };
+    return userPayload;
   }
 
   async login(email: string, password: string) {
