@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Enrollment } from './enrollment.entity';
 import { CourseOffering } from '@academic/entities/course-offering.entity';
+import { StudentGrade } from '@students/entities/student-grade.entity';
 
 @Entity({ schema: 'enrollments', name: 'enrollment_course' })
 export class EnrollmentCourse {
@@ -39,4 +41,10 @@ export class EnrollmentCourse {
   )
   @JoinColumn({ name: 'offering_id' })
   courseOffering: CourseOffering;
+
+  @OneToMany(
+    () => StudentGrade,
+    (studentGrade) => studentGrade.enrollmentCourse,
+  )
+  studentGrades: StudentGrade[];
 }

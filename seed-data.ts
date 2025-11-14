@@ -11,6 +11,7 @@ import { truncateTables } from 'src/seeds/truncate-tables.seed';
 import { seedRoles } from 'src/seeds/create-roles.seed';
 import { seedUsers } from 'src/seeds/create-users.seed';
 import { seedProfessors } from 'src/seeds/create-professors.seed';
+import { seedGradeCategories } from 'src/seeds/create-grade-categories.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
@@ -22,7 +23,7 @@ async function runSeeds() {
     roles.map((role) => role.roleId),
   );
   const student = await seedStudents(AppDataSource, users[0].userId);
-  await seedProfessors(AppDataSource, users[1].userId);
+  const professor = await seedProfessors(AppDataSource, users[1].userId);
   const program = await seedProgram(AppDataSource);
   await seedStudentProgram(AppDataSource, student.studentId, program.programId);
   const termType = await seedTermType(AppDataSource);
@@ -34,8 +35,10 @@ async function runSeeds() {
     AppDataSource,
     academicTerm.termId,
     program.programId,
+    professor.professorId,
   );
   await seedStudentHistory(AppDataSource, student.studentId, course.courseId);
+  await seedGradeCategories(AppDataSource);
   await AppDataSource.destroy();
 }
 
