@@ -1,20 +1,27 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ProfileInformationDto } from '@auth/dtos/profile-information.dto';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateStudentGradeRequestDto } from '@professor/dtos/update-student-grade-request.dto';
+import { ProfessorService } from '@professor/services/professor.service';
 
 @Controller('/api/v1/professor')
 export class ProfessorController {
+  constructor(private readonly professorService: ProfessorService) {}
   @Get('/assigned-courses')
-  async getAssignedCourses(@Query('professorId') _: number) {
-    return {
-      courses: [
-        {
-          courseId: 1,
-          courseOfferingId: 1,
-          name: 'Matematicas',
-          startTime: '07:00',
-          endTime: '09:00',
-        },
-      ],
-    };
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getAssignedCourses(@Req() request: { user: ProfileInformationDto }) {
+    return this.professorService.getAssignedCourses(request.user.professorId);
   }
 
   @Get('course/:courseOfferingId/students')
@@ -61,5 +68,25 @@ export class ProfessorController {
         },
       ],
     };
+  }
+
+  @Patch('/course/:courseOfferingId/student-grades/:studentId')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async updateStudentGrade(
+    @Param('courseOfferingId') courseOfferingId: number,
+    @Param('studentId') studentId: number,
+    @Req()
+    request: {
+      user: ProfileInformationDto;
+      body: UpdateStudentGradeRequestDto;
+    },
+  ) {
+    return this.professorService.updateStudentGrade(
+      request.body,
+      courseOfferingId,
+      studentId,
+      request.user.professorId,
+    );
   }
 }

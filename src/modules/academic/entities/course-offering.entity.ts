@@ -9,6 +9,7 @@ import { Course } from './course.entity';
 import { Program } from './program.entity';
 import { AcademicTerm } from './academic-term.entity';
 import { EnrollmentCourse } from '@enrollments/enrollments/enrollment-course.entity';
+import { Professor } from '@professor/entities/professor.entity';
 
 @Entity({ schema: 'academic', name: 'course_offering' })
 export class CourseOffering {
@@ -27,8 +28,8 @@ export class CourseOffering {
   @Column({ name: 'end_time' })
   endTime: string;
 
-  @Column({ name: 'professor' })
-  professor: string;
+  @Column({ name: 'professor_id', nullable: true })
+  professorId?: number;
 
   @Column({ name: 'capacity' })
   capacity: number;
@@ -59,4 +60,8 @@ export class CourseOffering {
   term: AcademicTerm;
 
   enrollmentCourses: EnrollmentCourse[];
+
+  @ManyToOne(() => Professor, (professor) => professor.courseOfferings)
+  @JoinColumn({ name: 'professor_id' })
+  professor: Professor;
 }

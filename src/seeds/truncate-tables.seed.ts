@@ -18,6 +18,8 @@ export async function truncateTables(dataSource) {
     'auth.role',
     'professors.professor',
     'auth.user',
+    'students.student_grade',
+    'academic.grade_category',
   ];
 
   for (const tableName of tableNames) {

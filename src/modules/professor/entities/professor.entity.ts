@@ -1,8 +1,11 @@
+import { CourseOffering } from '@academic/entities/course-offering.entity';
 import { User } from '@auth/entities/user.entity';
+import { StudentGrade } from '@students/entities/student-grade.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -31,4 +34,10 @@ export class Professor {
   @OneToOne(() => User, (user) => user.professor)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => CourseOffering, (offering) => offering.professor)
+  courseOfferings: CourseOffering[];
+
+  @OneToMany(() => StudentGrade, (studentGrade) => studentGrade.professor)
+  studentGrades: StudentGrade[];
 }
