@@ -39,35 +39,10 @@ export class ProfessorController {
   }
 
   @Get('/course/:courseOfferingId/student-grades')
-  async getCourseStudentGrades(@Param('courseOfferingId') _: number) {
-    return {
-      students: [
-        {
-          studentId: 1,
-          name: 'John Doe',
-          scores: [
-            {
-              type: 'midtermExam1',
-              value: 10,
-            },
-            {
-              type: 'midtermExam2',
-              value: 20,
-            },
-            {
-              type: 'assignments',
-              value: 35,
-            },
-            {
-              type: 'final',
-              value: 35,
-            },
-          ],
-          total: 100,
-          status: 'APPROVED',
-        },
-      ],
-    };
+  async getCourseStudentGrades(
+    @Param('courseOfferingId') courseOfferingId: number,
+  ) {
+    return this.professorService.getCourseStudentsAndGrades(courseOfferingId);
   }
 
   @Patch('/course/:courseOfferingId/student-grades/:studentId')

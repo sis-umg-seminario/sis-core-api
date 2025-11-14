@@ -82,6 +82,67 @@ export class ProfessorService {
     }
   }
 
+  public async getCourseStudentsAndGrades(courseOfferingId: number) {
+    const students: any[] = [];
+    const studentGrades =
+      await this.findStudentGradesByOfferingId(courseOfferingId);
+
+    for (const studentGrade of studentGrades) {
+      let student = students.find(
+        (student) =>
+          student.studentId ===
+          studentGrade.enrollmentCourse.enrollment.student.studentId,
+      );
+
+      if (!student) {
+        students.push({
+          studentId: studentGrade.enrollmentCourse.enrollment.student.studentId,
+          name:
+            studentGrade.enrollmentCourse.enrollment.student.firstName +
+            ' ' +
+            studentGrade.enrollmentCourse.enrollment.student.lastName,
+          scores: [],
+          total: 0,
+          status: '',
+        });
+      }
+    }
+
+    return {
+      students: students.map((student) => {
+        const studentGradesByStudent = studentGrades.filter(
+          (sg) =>
+            sg.enrollmentCourse.enrollment.student.studentId ===
+            student.studentId,
+        );
+        student.scores.push(
+          studentGradesByStudent.map((sg) => ({
+            type: sg.gradeCategory.identifier,
+            value: sg.score,
+          })),
+        );
+        student.total = studentGradesByStudent.reduce(
+          (acc, curr) => acc + curr.score,
+          0,
+        );
+        student.status = student.total >= 60 ? 'APPROVED' : 'FAILED';
+        return student;
+      }),
+    };
+  }
+
+  private async findStudentGradesByOfferingId(courseOfferingId: number) {
+    return this.studentGradeRepository.find({
+      where: { enrollmentCourse: { offeringId: courseOfferingId } },
+      relations: [
+        'enrollmentCourse',
+        'enrollmentCourse.enrollment',
+        'gradeCategory',
+        'enrollmentCourse.enrollment.student',
+      ],
+    });
+  }
+
   private async findGradeCategoryIdByType(type: string): Promise<any> {
     return this.gradeCategoryRepository.findOne({
       where: { identifier: type },
@@ -107,7 +168,7 @@ export class ProfessorService {
     });
   }
 
-  public async findEnrollmentCourseId(
+  private async findEnrollmentCourseId(
     courseOfferingId: number,
     studentId: number,
   ): Promise<any> {
