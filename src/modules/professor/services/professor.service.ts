@@ -83,6 +83,7 @@ export class ProfessorService {
         );
       }
     }
+    return { status: 'ok' };
   }
 
   public async getCourseStudentsAndGrades(courseOfferingId: number) {
