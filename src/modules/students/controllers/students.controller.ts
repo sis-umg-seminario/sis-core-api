@@ -101,8 +101,9 @@ export class StudentsController {
   getStudentGrades(
     @Query('startMonth') __: number,
     @Query('termType') ___: string,
+    @Req() request: { user: ProfileInformationDto },
   ) {
-    return this.studentsService.getStudentGrades(1);
+    return this.studentsService.getStudentGrades(request.user.studentId);
   }
 
   @Get('/student-profile')
