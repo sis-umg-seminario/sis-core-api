@@ -1,11 +1,11 @@
-// src\modules\students\services\students.service.ts
-
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from '@students/entities/student.entity'; // Importamos el archivo principal de Student
 import { StudentHistory } from '@students/entities/student-history.entity';
 import { StudentProgram } from '@students/entities/student-program.entity';
 import { Repository } from 'typeorm';
+import { StudentGrade } from '@students/entities/student-grade.entity';
+import { EnrollmentCourse } from '@enrollments/enrollments/enrollment-course.entity';
 
 @Injectable()
 export class StudentsService {
@@ -14,12 +14,12 @@ export class StudentsService {
     private studentProgramRepository: Repository<StudentProgram>,
     @InjectRepository(StudentHistory)
     private studentHistoryRepository: Repository<StudentHistory>,
-    // Le damos acceso al "archivo" principal de estudiantes
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+    @InjectRepository(EnrollmentCourse)
+    private enrollmentCourseRepository: Repository<EnrollmentCourse>,
   ) {}
 
-  // Este es tu método que ya existía, no lo tocamos.
   public async getEnrolledCareer(studentId: number): Promise<number> {
     const studentProgram = await this.studentProgramRepository.findOne({
       where: { studentId },
@@ -35,18 +35,13 @@ export class StudentsService {
       );
     }
 
-    // --- LÍNEA CORREGIDA ---
-    // Si encuentra el programa, devolvemos su ID.
     return studentProgram.programId;
   }
 
-  // Este es tu otro método que ya existía, no lo tocamos.
   public async getStudentHistory(studentId: number) {
     return this.studentHistoryRepository.find({ where: { studentId } });
   }
 
-  // --- NUEVA HABILIDAD AÑADIDA ---
-  // Le enseñamos a buscar el precio de la inscripción
   public async getStudentEnrollmentFee(studentId: number): Promise<number> {
     const query = this.studentRepository
       .createQueryBuilder('student')
@@ -83,7 +78,6 @@ export class StudentsService {
     return result;
   }
 
-  // Devuelve la información completa del estudiante (incluye email)
   public async getStudentById(studentId: number): Promise<Student> {
     const student = await this.studentRepository.findOne({
       where: { studentId },
@@ -94,5 +88,37 @@ export class StudentsService {
       );
     }
     return student;
+  }
+
+  public async getStudentGrades(studentId: number) {
+    const enrollmentCourses = await this.findCourseGradesByStudentId(studentId);
+
+    return {
+      courses: enrollmentCourses.map((ec) => ({
+        courseId: ec.courseOffering.courseId,
+        name: ec.courseOffering.course.name,
+        scores: ec.studentGrades.map((sg) => ({
+          type: sg.gradeCategory.identifier,
+          value: sg.score,
+        })),
+        total: ec.studentGrades.reduce((sum, sg) => sum + sg.score, 0),
+        status:
+          ec.studentGrades.reduce((sum, sg) => sum + sg.score, 0) >= 60
+            ? 'APPROVED'
+            : 'FAILED',
+      })),
+    };
+  }
+
+  private async findCourseGradesByStudentId(studentId: number) {
+    return this.enrollmentCourseRepository.find({
+      where: { enrollment: { studentId } },
+      relations: [
+        'studentGrades',
+        'studentGrades.gradeCategory',
+        'courseOffering',
+        'courseOffering.course',
+      ],
+    });
   }
 }

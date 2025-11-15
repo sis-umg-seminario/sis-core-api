@@ -8,10 +8,16 @@ import { StudentsController } from './controllers/students.controller';
 import { AcademicModule } from '../academic/academic.module';
 import { AuthController } from './controllers/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { EnrollmentCourse } from '@enrollments/enrollments/enrollment-course.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Student, StudentHistory, StudentProgram]),
+    TypeOrmModule.forFeature([
+      Student,
+      StudentHistory,
+      StudentProgram,
+      EnrollmentCourse,
+    ]),
     forwardRef(() => AcademicModule),
     JwtModule.register({}),
   ],
