@@ -111,15 +111,6 @@ export class StudentsService {
   }
 
   private async findCourseGradesByStudentId(studentId: number) {
-    // return this.studentGradeRepository.find({
-    //   where: { enrollmentCourse: { enrollment: { studentId } } },
-    //   relations: [
-    //     'enrollmentCourse',
-    //     'enrollmentCourse.enrollment',
-    //     'gradeCategory',
-    //     'enrollmentCourse.courseOffering.course',
-    //   ],
-    // });
     return this.enrollmentCourseRepository.find({
       where: { enrollment: { studentId } },
       relations: [
