@@ -50,7 +50,7 @@ export class PaymentsController {
 
     return {
       studentId: studentIdNum,
-      Name: 'Axel Mauricio Véliz Poom',
+      Name: 'John Doe',
       program: 'Ingeniería de Sistemas',
       currency: 'GTQ',
       period: {
