@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AssignedCoursesResponseDto } from '@professor/dtos/assigned-courses-response.dto';
 import { UpdateStudentGradeRequestDto } from '@professor/dtos/update-student-grade-request.dto';
 import { StudentGrade } from '@students/entities/student-grade.entity';
+import { Student } from '@students/entities/student.entity';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 
@@ -20,6 +21,8 @@ export class ProfessorService {
     private readonly studentGradeRepository: Repository<StudentGrade>,
     @InjectRepository(EnrollmentCourse)
     private readonly enrollmentCourseRepository: Repository<EnrollmentCourse>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
   ) {}
 
   public async getAssignedCourses(
@@ -129,6 +132,38 @@ export class ProfessorService {
         return student;
       }),
     };
+  }
+
+  public async getCourseStudents(courseOfferingId: number) {
+    const students =
+      await this.findStudentsByCourseOfferingId(courseOfferingId);
+    return {
+      students: students.map((student) => ({
+        studentId: student.studentId,
+        name: student.firstName + ' ' + student.lastName,
+        profileImageURL:
+          'https://fastly.picsum.photos/id/455/50/50.jpg?hmac=RXj-6vl67_XQQ1UHMd9CmQ0aoV1qxkpdDNpnVB4YzGM',
+      })),
+    };
+  }
+
+  private async findCourseStudentsByOfferingId(courseOfferingId: number) {
+    return this.enrollmentCourseRepository.find({
+      where: { offeringId: courseOfferingId },
+      relations: ['enrollment', 'enrollment.student'],
+    });
+  }
+
+  private async findStudentsByCourseOfferingId(courseOfferingId: number) {
+    return this.studentRepository.find({
+      where: {
+        enrollments: {
+          enrollmentCourses: {
+            offeringId: courseOfferingId,
+          },
+        },
+      },
+    });
   }
 
   private async findStudentGradesByOfferingId(courseOfferingId: number) {
