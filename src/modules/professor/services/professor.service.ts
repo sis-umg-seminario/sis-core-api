@@ -119,7 +119,7 @@ export class ProfessorService {
             student.studentId,
         );
         student.scores.push(
-          studentGradesByStudent.map((sg) => ({
+          ...studentGradesByStudent.map((sg) => ({
             type: sg.gradeCategory.identifier,
             value: sg.score,
           })),
