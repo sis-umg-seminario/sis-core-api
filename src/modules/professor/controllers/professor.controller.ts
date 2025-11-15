@@ -1,15 +1,6 @@
 import { ProfileInformationDto } from '@auth/dtos/profile-information.dto';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateStudentGradeRequestDto } from '@professor/dtos/update-student-grade-request.dto';
 import { ProfessorService } from '@professor/services/professor.service';
@@ -25,17 +16,8 @@ export class ProfessorController {
   }
 
   @Get('course/:courseOfferingId/students')
-  async getCourseStudents(@Param('courseOfferingId') _: number) {
-    return {
-      students: [
-        {
-          studentId: 1,
-          name: 'John Doe',
-          profileImageURL:
-            'https://fastly.picsum.photos/id/455/50/50.jpg?hmac=RXj-6vl67_XQQ1UHMd9CmQ0aoV1qxkpdDNpnVB4YzGM',
-        },
-      ],
-    };
+  async getCourseStudents(@Param('courseOfferingId') courseOfferingId: number) {
+    return this.professorService.getCourseStudents(courseOfferingId);
   }
 
   @Get('/course/:courseOfferingId/student-grades')

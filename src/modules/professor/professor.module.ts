@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { GradeCategory } from '@academic/entities/grade-category.entity';
 import { EnrollmentCourse } from '@enrollments/enrollments/enrollment-course.entity';
 import { StudentGrade } from '@students/entities/student-grade.entity';
+import { Student } from '@students/entities/student.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { StudentGrade } from '@students/entities/student-grade.entity';
       GradeCategory,
       StudentGrade,
       EnrollmentCourse,
+      Student,
     ]),
     JwtModule.register({}),
   ],
